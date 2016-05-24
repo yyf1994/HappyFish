@@ -2,7 +2,7 @@ package com.yyf.happyfish.wechat.presenter;
 
 import android.view.View;
 
-import com.yyf.happyfish.wechat.WeChatContract;
+import com.yyf.happyfish.wechat.contract.WeChatContract;
 import com.yyf.happyfish.wechat.model.WeChatEntity;
 import com.yyf.happyfish.wechat.model.WeChatHttp;
 
@@ -19,7 +19,6 @@ public class WeChatPresenter implements WeChatContract.Present {
     public WeChatPresenter(WeChatContract.View view)
     {
         this.mView = view;
-
         //fragment 要加上这句话  activity不需要
         mView.setPresenter(this);
     }
@@ -81,5 +80,6 @@ public class WeChatPresenter implements WeChatContract.Present {
     public void cancelRequest() {
         call.cancel();
     }
+
 
 }

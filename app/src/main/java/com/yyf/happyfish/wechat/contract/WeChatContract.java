@@ -1,4 +1,4 @@
-package com.yyf.happyfish.wechat;
+package com.yyf.happyfish.wechat.contract;
 
 import com.yyf.happyfish.base.BasePresenter;
 import com.yyf.happyfish.base.BaseView;
@@ -23,6 +23,6 @@ public class WeChatContract {
         void getData(android.view.View view);//获取数据
         void pulldowntorefresh();//下拉刷新
         void upload();//上啦加载
-        void cancelRequest();
+        void cancelRequest();//取消请求
     }
 }

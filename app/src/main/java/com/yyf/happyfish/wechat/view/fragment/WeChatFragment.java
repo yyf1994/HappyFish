@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.yyf.happyfish.R;
 import com.yyf.happyfish.base.BaseFragment;
-import com.yyf.happyfish.wechat.WeChatContract;
+import com.yyf.happyfish.wechat.contract.WeChatContract;
 import com.yyf.happyfish.wechat.adapter.WeChatAdapter;
 import com.yyf.happyfish.wechat.model.ListEntity;
 import com.yyf.happyfish.wechat.model.ResultEntity;

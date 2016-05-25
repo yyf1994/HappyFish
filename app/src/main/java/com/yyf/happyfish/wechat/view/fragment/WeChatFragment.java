@@ -13,8 +13,9 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.yyf.happyfish.R;
 import com.yyf.happyfish.base.BaseFragment;
-import com.yyf.happyfish.wechat.contract.WeChatContract;
+import com.yyf.happyfish.util.CheckNetUtil;
 import com.yyf.happyfish.wechat.adapter.WeChatAdapter;
+import com.yyf.happyfish.wechat.contract.WeChatContract;
 import com.yyf.happyfish.wechat.model.ListEntity;
 import com.yyf.happyfish.wechat.model.ResultEntity;
 import com.yyf.happyfish.wechat.model.WeChatEntity;
@@ -52,6 +53,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     private ResultEntity resultEntity;
     private List<ListEntity> list;
 
+    private CheckNetUtil checkNetUtil = new CheckNetUtil();
+
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
@@ -66,15 +69,19 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary,
                 R.color.colorPrimaryDark, R.color.colorPrimaryDark);
 
-        // 这句话是为了，第一次进入页面的时候显示加载进度条
-        swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
-                        .getDisplayMetrics()));
         initParams();
-        initAdapter();
-        setListener();
         //初始化数据
-        mPresent.getData(view);
+        if(checkNetUtil.isNetworkConnected(getActivity())){
+            setListener();
+            initAdapter();
+            // 这句话是为了，第一次进入页面的时候显示加载进度条
+            swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue
+                    .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
+                            .getDisplayMetrics()));
+            mPresent.getData(view);
+        }else{
+            Toast.makeText(getActivity(),"无网络",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -231,3 +238,4 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         }
     }
 }
+

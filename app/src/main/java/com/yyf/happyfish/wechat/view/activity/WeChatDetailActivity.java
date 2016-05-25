@@ -3,6 +3,7 @@ package com.yyf.happyfish.wechat.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,20 +15,28 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.zxing.Result;
 import com.yyf.happyfish.R;
+import com.yyf.happyfish.util.CheckNetUtil;
 import com.yyf.happyfish.wechat.contract.WeChatDetialContract;
 import com.yyf.happyfish.wechat.model.ListEntity;
 import com.yyf.happyfish.wechat.presenter.WeChatDetailPresenter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class WeChatDetailActivity extends AppCompatActivity implements View.OnLongClickListener,WeChatDetialContract.View {
 
@@ -35,10 +44,14 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
     Toolbar toolbar;
     @BindView(R.id.webview)
     WebView mCustomWebView;
+    @BindView(R.id.progressbar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.textview_error)
+    TextView tv_error;
 
     private ListEntity list;
-
-
+    private String url;
+    private CheckNetUtil checkNetUtil = new CheckNetUtil();
     private WeChatDetialContract.Present mPresent;
 
     @Override
@@ -54,7 +67,6 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
     private void setListener() {
         mCustomWebView.setOnLongClickListener(this);
-
     }
 
 
@@ -66,16 +78,48 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
         Intent intent = getIntent();
         list = (ListEntity) intent.getExtras().get("result");
-        String url = list.getUrl();
+         url = list.getUrl();
         Log.d("url", url);
-        mCustomWebView.loadUrl(url);
+        mCustomWebView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                mProgressBar.setProgress(newProgress);
+            }
+        });
         mCustomWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return super.shouldOverrideUrlLoading(view, url);
             }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                mCustomWebView.setVisibility(View.GONE);
+                tv_error.setVisibility(View.VISIBLE);
+                tv_error.setText("网页加载失败,点击重试");
+                super.onReceivedError(view, errorCode, description, failingUrl);
+            }
+            //在网页加载完成后使得进度条消失
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                mProgressBar.setVisibility(View.GONE);
+            }
+            //在网页加载开始时使得进度条显示
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                mProgressBar.setVisibility(View.VISIBLE);
+            }
         });
+        mCustomWebView.loadUrl(url);
     }
 
     private void initView() {
@@ -84,9 +128,19 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
         WebSettings webSettings = mCustomWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);//支持js
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setAppCacheEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//优先取缓存
         mCustomWebView.setFocusable(true);
         mCustomWebView.setFocusableInTouchMode(true);
+        mCustomWebView.setWebChromeClient(new WebChromeClient());
+    }
+
+    @OnClick(R.id.textview_error)
+    public void tv_error_click(){
+        if(checkNetUtil.isNetworkConnected(WeChatDetailActivity.this)){
+            mCustomWebView.loadUrl(url);
+        }
+
     }
 
     /**
@@ -174,7 +228,10 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
         @Override
         protected String doInBackground(String... params) {
-            mPresent.decodeImage(params[0]);
+            if(checkNetUtil.isNetworkConnected(WeChatDetailActivity.this)){
+                mPresent.decodeImage(params[0]);
+            }
+
             return null;
         }
     }

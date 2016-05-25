@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.yyf.happyfish.R;
+import com.yyf.happyfish.base.App;
 import com.yyf.happyfish.base.BaseFragment;
 import com.yyf.happyfish.util.CheckNetUtil;
+import com.yyf.happyfish.util.DiskCacheUtil;
 import com.yyf.happyfish.wechat.adapter.WeChatAdapter;
 import com.yyf.happyfish.wechat.contract.WeChatContract;
 import com.yyf.happyfish.wechat.model.ListEntity;
@@ -22,6 +24,8 @@ import com.yyf.happyfish.wechat.model.WeChatEntity;
 import com.yyf.happyfish.wechat.presenter.WeChatPresenter;
 import com.yyf.happyfish.wechat.view.activity.WeChatDetailActivity;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,28 +41,21 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     SwipeRefreshLayout swipeRefreshLayout;
 
     private List<ListEntity> mData;
-
     private LinearLayoutManager linearLayoutManager;
-
     private static int TOTAL_COUNTER = 0;
-
     private static final int PAGE_SIZE = 6;//正式使用的时候设置为10，让第一屏满屏
-
     private int mCurrentCounter = 0;
-
     private WeChatContract.Present mPresent;
-
     private WeChatAdapter mAdapter;
     private WeChatEntity weChatEntity;
     private ResultEntity resultEntity;
     private List<ListEntity> list;
-
+    private DiskCacheUtil diskCacheUtil;
     private CheckNetUtil checkNetUtil = new CheckNetUtil();
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-
         //设置recyclerview
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -68,19 +65,28 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         //设置加载时进度条颜色
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary,
                 R.color.colorPrimaryDark, R.color.colorPrimaryDark);
+        // 这句话是为了，第一次进入页面的时候显示加载进度条
+        swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue
+                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
+                        .getDisplayMetrics()));
 
         initParams();
+        initAdapter();
+        setListener();
         //初始化数据
         if(checkNetUtil.isNetworkConnected(getActivity())){
-            setListener();
-            initAdapter();
-            // 这句话是为了，第一次进入页面的时候显示加载进度条
-            swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue
-                    .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
-                            .getDisplayMetrics()));
+
             mPresent.getData(view);
         }else{
-            Toast.makeText(getActivity(),"无网络",Toast.LENGTH_SHORT).show();
+            //无网络时加载缓存
+            List<ListEntity> list1 = diskCacheUtil.getAsSerializable("ListEntity");
+            mData = list1;
+            mAdapter.setNewData(mData);
+            //无网络时禁止刷新
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setEnabled(false);
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
@@ -93,6 +99,13 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.registerReceiver();
+//        Log.d("123",isConnected);
+        try {
+            diskCacheUtil = new DiskCacheUtil(getActivity());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -111,13 +124,15 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         recyclerView.setAdapter(mAdapter);
         mCurrentCounter = mAdapter.getItemCount();
 
-        mAdapter.setOnLoadMoreListener(this);
-        mAdapter.openLoadMore(PAGE_SIZE, true);
+        if(checkNetUtil.isNetworkConnected(getActivity())){
+            mAdapter.setOnLoadMoreListener(this);
+            mAdapter.openLoadMore(PAGE_SIZE, true);
+        }
         mAdapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), WeChatDetailActivity.class);
-                intent.putExtra("result", list.get(position));
+                intent.putExtra("result", mData.get(position));
                 startActivity(intent);
             }
         });
@@ -131,18 +146,21 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     }
 
     private void setListener() {
-
         swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onRefresh() {
-        mPresent.pulldowntorefresh();
+        if(checkNetUtil.isNetworkConnected(getActivity())) {
+            mPresent.pulldowntorefresh();
+        }
     }
 
     @Override
     public void onLoadMoreRequested() {
-        mPresent.upload();
+        if(checkNetUtil.isNetworkConnected(getActivity())) {
+            mPresent.upload();
+        }
     }
 
     @Override
@@ -150,10 +168,10 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
         weChatEntity = response.body();
         String result = weChatEntity.getReason();
-
         if (result.equals("success")) {
             resultEntity = weChatEntity.getResult();
             list = resultEntity.getList();
+            diskCacheUtil.put("ListEntity", (Serializable) list);
             TOTAL_COUNTER = resultEntity.getTotalPage();
             mData = list;
         }
@@ -220,22 +238,32 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        if(checkNetUtil.isNetworkConnected(getActivity())) {
+            swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+            });
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //取消请求
-        mPresent.cancelRequest();
+        if(checkNetUtil.isNetworkConnected(getActivity())) {
+            mPresent.cancelRequest();
+        }
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        App.unregisterReceiver();
     }
 }
 

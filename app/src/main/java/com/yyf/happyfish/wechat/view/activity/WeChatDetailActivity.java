@@ -16,13 +16,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.Result;
 import com.yyf.happyfish.R;
@@ -95,11 +94,6 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
             }
 
             @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-            }
-
-            @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 mCustomWebView.setVisibility(View.GONE);
                 tv_error.setVisibility(View.VISIBLE);
@@ -136,10 +130,9 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
     }
 
     @OnClick(R.id.textview_error)
-    public void tv_error_click(){
-        if(checkNetUtil.isNetworkConnected(WeChatDetailActivity.this)){
-            mCustomWebView.loadUrl(url);
-        }
+     public void tv_error_click(){
+        Toast.makeText(WeChatDetailActivity.this,"tv_error_click",Toast.LENGTH_SHORT).show();
+        mCustomWebView.reload();
 
     }
 

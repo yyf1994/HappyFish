@@ -78,7 +78,10 @@ public class WeChatPresenter implements WeChatContract.Present {
 
     @Override
     public void cancelRequest() {
-        call.cancel();
+        if(call != null){
+            call.cancel();
+        }
+
     }
 
 

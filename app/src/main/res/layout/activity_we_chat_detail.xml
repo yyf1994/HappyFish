@@ -1,43 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
     tools:context="com.yyf.happyfish.wechat.view.activity.WeChatDetailActivity">
 
-    <include
-        android:id="@+id/content_title"
-        layout="@layout/toolbar_base"/>
-    <ProgressBar
-        android:id="@+id/progressbar"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <include
+            android:id="@+id/content_title"
+            layout="@layout/toolbar_base" />
 
-        <TextView
-            android:id="@+id/textview_error"
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="网络加载失败" />
+            android:layout_height="5dp"
+            android:layout_gravity="bottom"/>
 
-        <WebView
-            android:id="@+id/webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></WebView>
-    </FrameLayout>
+    </android.support.design.widget.AppBarLayout>
 
-    <!--<WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-    </WebView>-->
-
-</LinearLayout>
+    <include layout="@layout/content_main2" />
+</android.support.design.widget.CoordinatorLayout>

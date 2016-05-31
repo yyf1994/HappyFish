@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /**
+         * R.layout.activity_main2 为滑动时toolbar消失
+         * activity_main 为滑动时toolbar 显示
+         * */
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         unbinder = ButterKnife.bind(this);

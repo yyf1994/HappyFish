@@ -4,22 +4,23 @@
 
     <!-- 请求网络 -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:enabled="true" android:name=".service.ReceiveMsgService" />
+        <service
+            android:name=".service.ReceiveMsgService"
+            android:enabled="true" />
 
         <activity
             android:name=".main.view.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/ImageTranslucentTheme"
-            >
+            android:theme="@style/ImageTranslucentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +30,7 @@
         <activity
             android:name=".wechat.view.activity.WeChatDetailActivity"
             android:label="@string/title_activity_we_chat_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

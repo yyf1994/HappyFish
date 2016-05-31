@@ -1,4 +1,4 @@
-package com.yyf.happyfish.wechat.view.fragment;
+package com.yyf.happyfish.news.view.fragment;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class WeChatFragment extends BaseFragment implements WeChatContract.View, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+public class NewsFragment extends BaseFragment implements WeChatContract.View, BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
@@ -80,11 +80,6 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
                         .getDisplayMetrics()));
-
-//        IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-//        myReceiver=new NetWorkBroadcastReceiver();
-//        getActivity().registerReceiver(myReceiver, filter);
-
 
         initParams();
         initAdapter();

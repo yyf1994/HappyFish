@@ -14,7 +14,9 @@ public interface HappyFishService {
      * */
     @GET("/weixin/query?key=a75b2fd40ea0a3231f859c45b92a885b ")
     Call<WeChatEntity> loadWeChat();
-//    Call<WeChatEntity> loadWeChat(@Query("key") String key);
+
+    @GET("/weixin/query?key=a75b2fd40ea0a3231f859c45b92a885b ")
+    Call<WeChatEntity> loadNews();
 
     /**
      * http://api.douban.com/labs/bubbler/user/ahbei

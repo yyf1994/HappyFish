@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -145,7 +146,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
     private void initAdapter() {
         mAdapter = new WeChatAdapter(getActivity(), mData);
-        mAdapter.openLoadAnimation();
+
+        mAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         recyclerView.setAdapter(mAdapter);
         mCurrentCounter = mAdapter.getItemCount();
 
@@ -212,6 +214,10 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         }
 
         mAdapter.setNewData(mData);
+        if(mData.size()==0){
+            View emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) recyclerView.getParent(), false);
+            mAdapter.setEmptyView(emptyView);
+        }
         mCurrentCounter = PAGE_SIZE;
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);

@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -66,6 +67,26 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
     private void setListener() {
         mCustomWebView.setOnLongClickListener(this);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int menuItemId = item.getItemId();
+                if (menuItemId == R.id.action_item1) {
+                    Toast.makeText(WeChatDetailActivity.this , R.string.item01 , Toast.LENGTH_SHORT).show();
+
+                } else if (menuItemId == R.id.action_item2) {
+                    Toast.makeText(WeChatDetailActivity.this , R.string.item02 , Toast.LENGTH_SHORT).show();
+
+                }
+                return true;
+            }
+        });
     }
 
 
@@ -117,8 +138,8 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
     }
 
     private void initView() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.mipmap.back);
+        toolbar.inflateMenu(R.menu.toolbar_menu);//设置右上角的填充菜单
         WebSettings webSettings = mCustomWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);//支持js
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);

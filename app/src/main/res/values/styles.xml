@@ -36,4 +36,19 @@
         <!--在Android 4.4之前的版本上运行，直接跟随系统主题-->
     </style>
 
+    <style name="bg">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/mian_bg</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Theme.ToolBar.ZhiHu" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow.ZhiHu</item>
+    </style>
+
+    <style name="ActionButton.Overflow.ZhiHu" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@mipmap/more</item>
+    </style>
+
 </resources>

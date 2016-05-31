@@ -7,4 +7,5 @@
     <color name="tablayout_select_text">#814e93</color>
     <color name="tablayout_unselect_text">#81807b</color>
     <color name="white">#ffffff</color>
+    <color name="mian_bg">#c3c9ce</color>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     tools:context="com.yyf.happyfish.wechat.view.activity.WeChatDetailActivity">
 
@@ -11,9 +12,19 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
+       <!-- <android.support.v7.widget.Toolbar
+            android:id="@+id/content_title"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        </android.support.v7.widget.Toolbar>-->
+
         <include
             android:id="@+id/content_title"
-            layout="@layout/toolbar_base" />
+            layout="@layout/toolbar_base"
+            android:theme="@style/Theme.ToolBar.ZhiHu"/>
 
         <ProgressBar
             android:id="@+id/progressbar"

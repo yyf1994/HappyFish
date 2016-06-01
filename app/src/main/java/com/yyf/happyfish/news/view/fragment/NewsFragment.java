@@ -1,3 +1,4 @@
+/*
 package com.yyf.happyfish.news.view.fragment;
 
 import android.content.ComponentName;
@@ -51,7 +52,7 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
     private List<ListEntity> mData;
     private LinearLayoutManager linearLayoutManager;
     private static int TOTAL_COUNTER = 0;
-    private static final int PAGE_SIZE = 6;//正式使用的时候设置为10，让第一屏满屏
+//    private static final int PAGE_SIZE = 6;//正式使用的时候设置为10，让第一屏满屏
     private int mCurrentCounter = 0;
     private WeChatContract.Present mPresent;
     private WeChatAdapter mAdapter;
@@ -63,6 +64,9 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
     private CheckNetUtil checkNetUtil = new CheckNetUtil();
     public static boolean isConnected;
     private  NetWorkBroadcastReceiver myReceiver;
+    private String key = "a75b2fd40ea0a3231f859c45b92a885b";
+    private int  pno = 1;
+    private int ps = 10;
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
@@ -87,11 +91,13 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
         //初始化数据
         if(checkNetUtil.isNetworkConnected(getActivity())){
 
-            mPresent.getData(view);
+            mPresent.getData(view,pno,ps,key);
         }
-      /*  if(isConnected){
+      */
+/*  if(isConnected){
             mPresent.getData(view);
-        }*/
+        }*//*
+
         else{
             //无网络时加载缓存
             List<ListEntity> list1 = diskCacheUtil.getAsSerializable("ListEntity");
@@ -148,10 +154,12 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
             mAdapter.setOnLoadMoreListener(this);
             mAdapter.openLoadMore(PAGE_SIZE, true);
         }
-       /* if(isConnected){
+       */
+/* if(isConnected){
             mAdapter.setOnLoadMoreListener(this);
             mAdapter.openLoadMore(PAGE_SIZE, true);
-        }*/
+        }*//*
+
         mAdapter.setOnRecyclerViewItemClickListener(new BaseQuickAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -176,11 +184,13 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
     @Override
     public void onRefresh() {
         if(checkNetUtil.isNetworkConnected(getActivity())) {
-            mPresent.pulldowntorefresh();
+            mPresent.pulldowntorefresh(pno.ps,key);
         }
-        /*if(isConnected) {
+        */
+/*if(isConnected) {
             mPresent.pulldowntorefresh();
-        }*/
+        }*//*
+
     }
 
     @Override
@@ -188,9 +198,11 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
         if(checkNetUtil.isNetworkConnected(getActivity())) {
             mPresent.upload();
         }
-       /* if(isConnected) {
+       */
+/* if(isConnected) {
             mPresent.upload();
-        }*/
+        }*//*
+
     }
 
     @Override
@@ -277,14 +289,16 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
             });
         }
 
-      /*  if(isConnected) {
+      */
+/*  if(isConnected) {
             swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     swipeRefreshLayout.setRefreshing(true);
                 }
             });
-        }*/
+        }*//*
+
     }
 
     @Override
@@ -294,9 +308,11 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
         if(checkNetUtil.isNetworkConnected(getActivity())) {
             mPresent.cancelRequest();
         }
-      /*  if(isConnected) {
+      */
+/*  if(isConnected) {
             mPresent.cancelRequest();
-        }*/
+        }*//*
+
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -352,3 +368,4 @@ public class NewsFragment extends BaseFragment implements WeChatContract.View, B
 
 }
 
+*/

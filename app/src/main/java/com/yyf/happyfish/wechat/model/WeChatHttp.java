@@ -11,7 +11,7 @@ import retrofit2.Call;
  */
 public class WeChatHttp<T> {
 
-    String key = "a75b2fd40ea0a3231f859c45b92a885b";
+
     private WeChatHttp(){};
 
     private static class InstanceHolder{
@@ -23,16 +23,16 @@ public class WeChatHttp<T> {
         return InstanceHolder.instance;
     }
 
-    public Call<T> getData() {
-        Call<T> call = (Call<T>) NetWork.getRetrofit().create(HappyFishService.class).loadWeChat();
+    public Call<T> getData(int pno,int ps,String key) {
+        Call<T> call = (Call<T>) NetWork.getRetrofit().create(HappyFishService.class).loadWeChat(pno,ps,key);
         return call;
     }
-    public Call<T> pulldowntorefresh() {
-        Call<T> call = (Call<T>) NetWork.getRetrofit().create(HappyFishService.class).loadWeChat();
+    public Call<T> pulldowntorefresh(int pno,int ps,String key) {
+        Call<T> call = (Call<T>) NetWork.getRetrofit().create(HappyFishService.class).loadWeChat(pno,ps,key);
         return call;
     }
-    public Call<T> upload() {
-        Call<T> call = (Call<T>) NetWork.getRetrofit().create(HappyFishService.class).loadWeChat();
+    public Call<T> upload(int pno,int ps,String key) {
+        Call<T> call = (Call<T>) NetWork.getRetrofit().create(HappyFishService.class).loadWeChat(pno,ps,key);
         return call;
     }
 }

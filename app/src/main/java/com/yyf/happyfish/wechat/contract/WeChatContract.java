@@ -20,9 +20,9 @@ public class WeChatContract {
     }
 
     public interface Present extends BasePresenter {
-        void getData(android.view.View view);//获取数据
-        void pulldowntorefresh();//下拉刷新
-        void upload();//上啦加载
+        void getData(android.view.View view,int pno,int ps,String key);//获取数据
+        void pulldowntorefresh(int pno,int ps,String key);//下拉刷新
+        void upload(int pno,int ps,String key);//上啦加载
         void cancelRequest();//取消请求
     }
 }

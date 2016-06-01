@@ -16,6 +16,7 @@ import retrofit2.Response;
 public class WeChatPresenter implements WeChatContract.Present {
     private final WeChatContract.View mView;
     Call<WeChatEntity> call;
+
     public WeChatPresenter(WeChatContract.View view)
     {
         this.mView = view;
@@ -29,8 +30,8 @@ public class WeChatPresenter implements WeChatContract.Present {
     }
 
     @Override
-    public void getData(final View view) {
-        call = WeChatHttp.getInstance().getData();
+    public void getData(final View view,int pno,int ps,String key) {
+        call = WeChatHttp.getInstance().getData(pno,ps,key);
         call.enqueue(new Callback<WeChatEntity>() {
             @Override
             public void onResponse(Call<WeChatEntity> call, Response<WeChatEntity> response) {
@@ -45,8 +46,8 @@ public class WeChatPresenter implements WeChatContract.Present {
     }
 
     @Override
-    public void pulldowntorefresh() {
-         call = WeChatHttp.getInstance().pulldowntorefresh();
+    public void pulldowntorefresh(int pno,int ps,String key) {
+         call = WeChatHttp.getInstance().pulldowntorefresh(pno, ps, key);
         call.enqueue(new Callback<WeChatEntity>() {
             @Override
             public void onResponse(Call<WeChatEntity> call, Response<WeChatEntity> response) {
@@ -61,8 +62,8 @@ public class WeChatPresenter implements WeChatContract.Present {
     }
 
     @Override
-    public void upload() {
-         call = WeChatHttp.getInstance().upload();
+    public void upload(int pno,int ps,String key) {
+         call = WeChatHttp.getInstance().upload(pno, ps, key);
         call.enqueue(new Callback<WeChatEntity>() {
             @Override
             public void onResponse(Call<WeChatEntity> call, Response<WeChatEntity> response) {

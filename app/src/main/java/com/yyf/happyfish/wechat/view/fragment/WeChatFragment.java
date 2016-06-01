@@ -51,9 +51,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
     private List<ListEntity> mData;
     private LinearLayoutManager linearLayoutManager;
-    private static int TOTAL_COUNTER = 0;
-    private static final int PAGE_SIZE = 6;//正式使用的时候设置为10，让第一屏满屏
-    private int mCurrentCounter = 0;
+
+
     private WeChatContract.Present mPresent;
     private WeChatAdapter mAdapter;
     private WeChatEntity weChatEntity;
@@ -64,6 +63,12 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     private CheckNetUtil checkNetUtil = new CheckNetUtil();
     public static boolean isConnected;
     private  NetWorkBroadcastReceiver myReceiver;
+    private String key = "a75b2fd40ea0a3231f859c45b92a885b";
+    private int  pno = 1;
+    private int ps = 10;
+    private int total_pno= 1;
+    private int mCurrentCounter = 0;
+    private static int TOTAL_COUNTER = 0;
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
@@ -85,15 +90,13 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 //        IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 //        myReceiver=new NetWorkBroadcastReceiver();
 //        getActivity().registerReceiver(myReceiver, filter);
-
-
         initParams();
         initAdapter();
         setListener();
         //初始化数据
         if(checkNetUtil.isNetworkConnected(getActivity())){
 
-            mPresent.getData(view);
+            mPresent.getData(view,pno,ps,key);
         }
       /*  if(isConnected){
             mPresent.getData(view);
@@ -149,11 +152,11 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
         mAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         recyclerView.setAdapter(mAdapter);
-        mCurrentCounter = mAdapter.getItemCount();
+        mCurrentCounter = mAdapter.getData().size();
 
         if(checkNetUtil.isNetworkConnected(getActivity())){
             mAdapter.setOnLoadMoreListener(this);
-            mAdapter.openLoadMore(PAGE_SIZE, true);
+            mAdapter.openLoadMore(ps, true);
         }
        /* if(isConnected){
             mAdapter.setOnLoadMoreListener(this);
@@ -183,7 +186,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     public void onRefresh() {
         if(checkNetUtil.isNetworkConnected(getActivity())) {
-            mPresent.pulldowntorefresh();
+            pno = 1;
+            mPresent.pulldowntorefresh(pno,ps,key);
         }
         /*if(isConnected) {
             mPresent.pulldowntorefresh();
@@ -192,8 +196,14 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
     @Override
     public void onLoadMoreRequested() {
+        Log.d("onLoadMoreRequested","onLoadMoreRequested");
+        if(pno < total_pno){
+            pno++;
+        }else{
+            pno = total_pno;
+        }
         if(checkNetUtil.isNetworkConnected(getActivity())) {
-            mPresent.upload();
+            mPresent.upload(pno,ps,key);
         }
        /* if(isConnected) {
             mPresent.upload();
@@ -210,6 +220,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             list = resultEntity.getList();
             diskCacheUtil.put("ListEntity", (Serializable) list);
             TOTAL_COUNTER = resultEntity.getTotalPage();
+            total_pno =(TOTAL_COUNTER+(ps-1))/ps;
             mData = list;
         }
 
@@ -218,7 +229,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             View emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) recyclerView.getParent(), false);
             mAdapter.setEmptyView(emptyView);
         }
-        mCurrentCounter = PAGE_SIZE;
+        mCurrentCounter = ps;
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -230,6 +241,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             swipeRefreshLayout.setRefreshing(false);
         }
         t.printStackTrace();
+        Toast.makeText(getActivity(),"网络连接超时",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -241,10 +253,15 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             resultEntity = weChatEntity.getResult();
             list = resultEntity.getList();
             TOTAL_COUNTER = resultEntity.getTotalPage();
+            total_pno =(TOTAL_COUNTER+(ps-1))/ps;
             mData = list;
         }
         mAdapter.setNewData(mData);
-        mCurrentCounter = PAGE_SIZE;
+        if(mData.size()==0){
+            View emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) recyclerView.getParent(), false);
+            mAdapter.setEmptyView(emptyView);
+        }
+        mCurrentCounter = ps;
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -259,9 +276,9 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
                     mAdapter.notifyDataChangedAfterLoadMore(false);
                 }
             });
-
+            View view = getActivity().getLayoutInflater().inflate(R.layout.not_loading, (ViewGroup) recyclerView.getParent(), false);
+            mAdapter.addFooterView(view);
         } else {
-
             weChatEntity = response.body();
             String result = weChatEntity.getReason();
 
@@ -270,9 +287,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
                 list = resultEntity.getList();
                 mData = list;
             }
-            mAdapter.addData(mData);
             mAdapter.notifyDataChangedAfterLoadMore(mData, true);
-            mCurrentCounter = mAdapter.getItemCount();
+            mCurrentCounter = mAdapter.getData().size();
         }
     }
 

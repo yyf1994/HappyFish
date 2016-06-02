@@ -9,20 +9,39 @@ import com.yyf.happyfish.R;
 import com.yyf.happyfish.transform.GlideCircleTransform;
 import com.yyf.happyfish.wechat.model.ListEntity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2016/3/18.
  */
 
 public class WeChatAdapter extends BaseQuickAdapter<ListEntity> {
+    ArrayList<String> color;
 
-    public WeChatAdapter(Context context, List<ListEntity> datas) {
+    public WeChatAdapter(Context context, List<ListEntity> datas,ArrayList<String> color) {
         super(context, R.layout.wechat_item, datas);
+        this.color = color;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, ListEntity item) {
+        Random mRandom = new Random();
+        int a = mRandom.nextInt(color.size());
+        String s = color.get(a);
+        System.out.println(s + "");
+//        color.remove(a);
+//        for(String s:color){
+            if(s.equals("red")){
+                helper.setBackgroundRes(R.id.cardview,R.mipmap.hongbao1);
+            }else if(s.equals("purple")){
+                helper.setBackgroundRes(R.id.cardview,R.mipmap.hoongbao2);
+            }else{
+                helper.setBackgroundRes(R.id.cardview,R.mipmap.hongbao3);
+            }
+//        }
+
         helper.setText(R.id.title_tv, item.getTitle())
         .setText(R.id.source_tv,"来自"+item.getSource())
         .setImageUrl(R.id.img_firstimg,item.getFirstImg(),R.mipmap.ic_launcher,new GlideCircleTransform(mContext));

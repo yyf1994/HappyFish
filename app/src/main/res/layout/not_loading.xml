@@ -6,7 +6,6 @@
               android:gravity="center"
               android:orientation="horizontal">
 
-    
     <TextView
         android:textColor="@android:color/darker_gray"
         android:gravity="center"

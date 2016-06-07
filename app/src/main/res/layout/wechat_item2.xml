@@ -20,13 +20,13 @@
         android:layout_height="wrap_content"
         >
         <ImageView
-            android:id="@+id/img_firstimg"
+            android:id="@+id/img_firstimg2"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:padding="10dp"/>
 
         <TextView
-            android:id="@+id/title_tv"
+            android:id="@+id/title_tv2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -35,7 +35,7 @@
             android:textSize="18dp"/>
 
         <TextView
-            android:id="@+id/source_tv"
+            android:id="@+id/source_tv2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

@@ -35,7 +35,6 @@ import com.yyf.happyfish.wechat.view.activity.WeChatDetailActivity;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -149,13 +148,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     }
 
     private void initAdapter() {
-
-        ArrayList<String> mArrayList = new ArrayList<String>();
-            mArrayList.add("red");
-            mArrayList.add("purple");
-            mArrayList.add("green");
-
-        mAdapter = new WeChatAdapter(getActivity(), mData,mArrayList);
+        mAdapter = new WeChatAdapter(getActivity(), mData);
 
         mAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         recyclerView.setAdapter(mAdapter);

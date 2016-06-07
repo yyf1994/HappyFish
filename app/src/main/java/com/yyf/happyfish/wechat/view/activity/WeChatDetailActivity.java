@@ -1,5 +1,6 @@
 package com.yyf.happyfish.wechat.view.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +27,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.shareboard.SnsPlatform;
+import com.umeng.socialize.utils.ShareBoardlistener;
 import com.yyf.happyfish.R;
 import com.yyf.happyfish.util.CheckNetUtil;
 import com.yyf.happyfish.wechat.contract.WeChatDetialContract;
@@ -38,7 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class WeChatDetailActivity extends AppCompatActivity implements View.OnLongClickListener,WeChatDetialContract.View {
+public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,View.OnLongClickListener, WeChatDetialContract.View {
 
     @BindView(R.id.content_title)
     Toolbar toolbar;
@@ -51,8 +60,12 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
     private ListEntity list;
     private String url;
+    private String firstimg;
+    private String title;
+    private String text;
     private CheckNetUtil checkNetUtil = new CheckNetUtil();
     private WeChatDetialContract.Present mPresent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,28 +76,27 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
         initData();
         initParams();
         setListener();
+        initPermission();
     }
+
+    private void initPermission() {
+        //可以将一下代码加到你的MainActivity中，或者在任意一个需要调用分享功能的activity当中
+        String[] mPermissionList = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CALL_PHONE, Manifest.permission.READ_LOGS,
+                Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.SET_DEBUG_APP, Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.GET_ACCOUNTS};
+        ActivityCompat.requestPermissions(WeChatDetailActivity.this, mPermissionList, 100);
+    }
+
 
     private void setListener() {
         mCustomWebView.setOnLongClickListener(this);
+        toolbar.setOnMenuItemClickListener(this);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-            }
-        });
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int menuItemId = item.getItemId();
-                if (menuItemId == R.id.action_item1) {
-                    Toast.makeText(WeChatDetailActivity.this , R.string.item01 , Toast.LENGTH_SHORT).show();
-
-                } else if (menuItemId == R.id.action_item2) {
-                    Toast.makeText(WeChatDetailActivity.this , R.string.item02 , Toast.LENGTH_SHORT).show();
-
-                }
-                return true;
             }
         });
     }
@@ -98,9 +110,12 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
         Intent intent = getIntent();
         list = (ListEntity) intent.getExtras().get("result");
-         url = list.getUrl();
+        url = list.getUrl();
+        firstimg = list.getFirstImg();
+        title = list.getTitle();
+        text = list.getSource();
         Log.d("url", url);
-        mCustomWebView.setWebChromeClient(new WebChromeClient(){
+        mCustomWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
@@ -121,12 +136,14 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
                 tv_error.setText("网页加载失败,点击重试");
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
+
             //在网页加载完成后使得进度条消失
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 mProgressBar.setVisibility(View.GONE);
             }
+
             //在网页加载开始时使得进度条显示
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -151,8 +168,8 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
     }
 
     @OnClick(R.id.textview_error)
-     public void tv_error_click(){
-        Toast.makeText(WeChatDetailActivity.this,"tv_error_click",Toast.LENGTH_SHORT).show();
+    public void tv_error_click() {
+        Toast.makeText(WeChatDetailActivity.this, "tv_error_click", Toast.LENGTH_SHORT).show();
         mCustomWebView.reload();
 
     }
@@ -233,6 +250,64 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
     }
 
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+        Log.d("result","onActivityResult");
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        int menuItemId = item.getItemId();
+        if (menuItemId == R.id.action_item1) {
+            /**分享面板增加自定义按钮,以及不同分享平台不同分享内容，不同回调监听**/
+            final UMImage image = new UMImage(this, firstimg);
+               new ShareAction(this).setDisplayList(SHARE_MEDIA.SINA,SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+                       .setShareboardclickCallback(new ShareBoardlistener() {
+                           @Override
+                           public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
+                               if (share_media == SHARE_MEDIA.SINA){
+//                                       new ShareAction(WeChatDetailActivity.this).setPlatform(share_media).setCallback(testmulListener)
+//                                               .withText("hello sina")
+//                                               .share();
+                               }else if (share_media == SHARE_MEDIA.QQ){
+                                   new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.QQ).setCallback(umShareListener)
+                                           .withTitle(title)
+                                           .withText(text)
+                                           .withMedia(image)
+                                           .share();
+                               }else if(share_media == SHARE_MEDIA.QZONE){
+                                   new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.QZONE).setCallback(umShareListener)
+                                           .withTitle(title)
+                                           .withText(text)
+                                           .withMedia(image)
+                                           .withTargetUrl(url)
+                                           .share();
+                               }else if(share_media == SHARE_MEDIA.WEIXIN){
+                                   new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.WEIXIN).setCallback(umShareListener)
+                                           .withTitle(title)
+                                           .withText(text)
+                                           .withMedia(image)
+                                           .withTargetUrl(url)
+                                           .share();
+                               }
+                               else {
+//                                       new ShareAction(WeChatDetailActivity.this).setPlatform(share_media).setCallback(testmulListener)
+//                                               .withText("hello other platform")
+//                                               .share();
+                               }
+                           }
+                       }).open();
+        } else if (menuItemId == R.id.action_item2) {
+            Toast.makeText(WeChatDetailActivity.this, R.string.item02, Toast.LENGTH_SHORT).show();
+
+        }
+        return true;
+    }
+
     public class MyAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String s) {
@@ -242,7 +317,7 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
 
         @Override
         protected String doInBackground(String... params) {
-            if(checkNetUtil.isNetworkConnected(WeChatDetailActivity.this)){
+            if (checkNetUtil.isNetworkConnected(WeChatDetailActivity.this)) {
                 mPresent.decodeImage(params[0]);
             }
 
@@ -259,6 +334,29 @@ public class WeChatDetailActivity extends AppCompatActivity implements View.OnLo
             if (msg.what == 0) {
                 mPresent.addData();
             }
+        }
+    };
+
+    private UMShareListener umShareListener = new UMShareListener() {
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            Log.d("plat","platform"+platform);
+            if(platform.name().equals("WEIXIN_FAVORITE")){
+                Toast.makeText(WeChatDetailActivity.this,platform + " 收藏成功啦",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(WeChatDetailActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Toast.makeText(WeChatDetailActivity.this,platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Toast.makeText(WeChatDetailActivity.this,platform + " 分享取消了", Toast.LENGTH_SHORT).show();
         }
     };
 }

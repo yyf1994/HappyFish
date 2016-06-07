@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
-    tools:context=".main.view.MainActivity"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
-    android:foreground="?android:attr/selectableItemBackground">
-<include android:id="@+id/item1" layout="@layout/wechat_item" />
-    <include android:id="@+id/item2" layout="@layout/wechat_item"/>
-    <include android:id="@+id/item3" layout="@layout/wechat_item"/>
+    tools:context=".main.view.MainActivity">
+
+    <include
+        android:id="@+id/item1"
+        layout="@layout/wechat_item" />
+
+    <include
+        android:id="@+id/item2"
+        layout="@layout/wechat_item1" />
+
+    <include
+        android:id="@+id/item3"
+        layout="@layout/wechat_item2" />
 
 </LinearLayout>

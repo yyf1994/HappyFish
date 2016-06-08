@@ -2,7 +2,10 @@
 package com.yyf.happyfish.wechat.adapter;
 
 import android.content.Context;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.yyf.happyfish.R;
@@ -40,12 +43,14 @@ public class WeChatAdapter extends BaseQuickAdapter<ListEntity> {
          * 不使用不同背景  要使用R.layout.wechat_item这个布局
          * */
         helper.setText(R.id.title_tv, item.getTitle())
-                .setText(R.id.source_tv, "来自" + item.getSource())
-                .setImageUrl(R.id.img_firstimg, item.getFirstImg(), R.mipmap.ic_launcher, new GlideCircleTransform(mContext));
-              /*  .setText(R.id.tv_miaoshu, item.getAvatar())
-                .setText(R.id.tv_time, item.getName())
-                .setImageUrl(R.id.img_logo, item.getAvatar(), R.mipmap.ic_launcher, new GlideCircleTransform(mContext))
-                .linkify(R.id.tv_gsname);*/
+                .setText(R.id.source_tv, "来自" + item.getSource());
+        Glide.with(mContext)
+                .load(item.getFirstImg()).crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)//缓存全部
+                .transform(new GlideCircleTransform(mContext))
+                .placeholder(R.mipmap.ic_launcher)//设置占位图
+                .error(R.mipmap.ic_launcher)//设置错误图
+                .into((ImageView) helper.getView(R.id.img_firstimg));
     }
 
 }

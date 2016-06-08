@@ -270,9 +270,11 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
                            @Override
                            public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
                                if (share_media == SHARE_MEDIA.SINA){
-//                                       new ShareAction(WeChatDetailActivity.this).setPlatform(share_media).setCallback(testmulListener)
-//                                               .withText("hello sina")
-//                                               .share();
+                                   new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.SINA).setCallback(umShareListener)
+                                           .withText("Umeng Share")
+                                           .withTitle("this is title")
+                                           .withTargetUrl(url)
+                                           .share();
                                }else if (share_media == SHARE_MEDIA.QQ){
                                    new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.QQ).setCallback(umShareListener)
                                            .withTitle(title)
@@ -293,11 +295,6 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
                                            .withMedia(image)
                                            .withTargetUrl(url)
                                            .share();
-                               }
-                               else {
-//                                       new ShareAction(WeChatDetailActivity.this).setPlatform(share_media).setCallback(testmulListener)
-//                                               .withText("hello other platform")
-//                                               .share();
                                }
                            }
                        }).open();

@@ -31,6 +31,11 @@
             android:name=".service.ReceiveMsgService"
             android:enabled="true" />
 
+        <service
+            android:name="com.sina.weibo.sdk.net.DownloadService"
+            android:exported="false">
+        </service>
+
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="57565ab6e0f55a9ffe0039cf" >
@@ -42,6 +47,7 @@
             android:theme="@style/Theme.UMDefault"
             android:excludeFromRecents="true"/>
 
+        <!--QQ QQ空间界面-->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -58,12 +64,30 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <!--微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!--新浪微博-->
+        <activity
+            android:name=".base.WBShareActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
+            android:configChanges="keyboardHidden|orientation"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" >
+        </activity>
 
         <activity
             android:name=".main.view.MainActivity"

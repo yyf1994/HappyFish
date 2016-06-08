@@ -8,3 +8,4 @@
 3.使用disklrucache进行缓存  
 4.使用recyclerview展示界面  
 5.使用webview展示详情  
+6.加入友盟第三方分享 

@@ -265,7 +265,7 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
         if (menuItemId == R.id.action_item1) {
             /**分享面板增加自定义按钮,以及不同分享平台不同分享内容，不同回调监听**/
             final UMImage image = new UMImage(this, firstimg);
-               new ShareAction(this).setDisplayList(SHARE_MEDIA.SINA,SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+               new ShareAction(this).setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
                        .setShareboardclickCallback(new ShareBoardlistener() {
                            @Override
                            public void onclick(SnsPlatform snsPlatform, SHARE_MEDIA share_media) {
@@ -290,6 +290,13 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
                                            .share();
                                }else if(share_media == SHARE_MEDIA.WEIXIN){
                                    new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.WEIXIN).setCallback(umShareListener)
+                                           .withTitle(title)
+                                           .withText(text)
+                                           .withMedia(image)
+                                           .withTargetUrl(url)
+                                           .share();
+                               }else if(share_media == SHARE_MEDIA.WEIXIN_CIRCLE){
+                                   new ShareAction(WeChatDetailActivity.this).setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE).setCallback(umShareListener)
                                            .withTitle(title)
                                            .withText(text)
                                            .withMedia(image)

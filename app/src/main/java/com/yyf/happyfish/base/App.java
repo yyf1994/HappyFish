@@ -27,7 +27,7 @@ public class App extends Application {
     //各个平台的配置，建议放在全局Application或者程序入口
     {
         //微信    wx12342956d1cab4f9,a5ae111de7d9ea137e88a5e02c07c94d
-        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3");
+        PlatformConfig.setWeixin("wx93433d20a9ae5130", "011c1cfe5dc96ec96c73001a544104a1");
         //新浪微博
         PlatformConfig.setSinaWeibo("1636054210", "843b045d00da2ac15e7ec2c826bf7e31");
         PlatformConfig.setQQZone("1105456244", "T4ViC2XXCo1w23K3");

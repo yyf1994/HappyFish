@@ -1,42 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tl="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:fitsSystemWindows="true"
     tools:context=".main.view.MainActivity">
-    <include
-        android:id="@+id/toolbar_base"
-        layout="@layout/toolbar_base"
-        />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-       />
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <com.flyco.tablayout.CommonTabLayout
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="53dp"
-        android:background="@color/bg_tablayout"
-        android:layout_alignParentBottom="true"
-        app:layout_anchor="@+id/viewpager"
-        app:layout_anchorGravity="bottom"
-        tl:tl_iconHeight="23dp"
-        tl:tl_iconWidth="23dp"
-        tl:tl_indicator_color="#2C97DE"
-        tl:tl_indicator_height="0dp"
-        tl:tl_textSelectColor="@color/tablayout_select_text"
-        tl:tl_textUnselectColor="@color/tablayout_unselect_text"
-        tl:tl_textsize="12sp"
-        tl:tl_underline_color="#DDDDDD"
-        tl:tl_underline_height="1dp"
-        />
-</LinearLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_base"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/toolbar_bg"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_main" />
+
+</android.support.design.widget.CoordinatorLayout>
+

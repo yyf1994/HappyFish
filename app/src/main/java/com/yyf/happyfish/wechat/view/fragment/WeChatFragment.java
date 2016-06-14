@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,10 +36,13 @@ import com.yyf.happyfish.wechat.view.activity.WeChatDetailActivity;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -48,11 +52,14 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     private List<ListEntity> mData;
+    private List<ListEntity> mAllData;
     private LinearLayoutManager linearLayoutManager;
 
-
+    private Unbinder unbinder;
     private WeChatContract.Present mPresent;
     private WeChatAdapter mAdapter;
     private WeChatEntity weChatEntity;
@@ -73,6 +80,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this,view);
+        mAllData = new ArrayList<>();
         //设置recyclerview
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -105,6 +114,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             //无网络时加载缓存
             List<ListEntity> list1 = diskCacheUtil.getAsSerializable("ListEntity");
             mData = list1;
+            mAllData.clear();
+            mAllData.addAll(mData);
             mAdapter.setNewData(mData);
             //无网络时禁止刷新
             if (swipeRefreshLayout != null) {
@@ -166,7 +177,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), WeChatDetailActivity.class);
-                intent.putExtra("result", mData.get(position));
+                ListEntity list =  mAllData.get(position);
+                intent.putExtra("result", list);
                 startActivity(intent);
             }
         });
@@ -181,6 +193,11 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
     private void setListener() {
         swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    @OnClick(R.id.fab)
+    public void fab(){
+        linearLayoutManager.scrollToPosition(0);
     }
 
     @Override
@@ -222,6 +239,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             TOTAL_COUNTER = resultEntity.getTotalPage();
             total_pno =(TOTAL_COUNTER+(ps-1))/ps;
             mData = list;
+            mAllData.clear();
+            mAllData.addAll(mData);
         }
 
         mAdapter.setNewData(mData);
@@ -255,6 +274,8 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             TOTAL_COUNTER = resultEntity.getTotalPage();
             total_pno =(TOTAL_COUNTER+(ps-1))/ps;
             mData = list;
+            mAllData.clear();
+            mAllData.addAll(mData);
         }
         mAdapter.setNewData(mData);
         if(mData.size()==0){
@@ -286,6 +307,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
                 resultEntity = weChatEntity.getResult();
                 list = resultEntity.getList();
                 mData = list;
+                mAllData.addAll(mData);
             }
             mAdapter.notifyDataChangedAfterLoadMore(mData, true);
             mCurrentCounter = mAdapter.getData().size();
@@ -377,5 +399,10 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         };
     };
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }
 

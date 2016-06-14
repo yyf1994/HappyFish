@@ -101,7 +101,7 @@
         <activity
             android:name=".wechat.view.activity.WeChatDetailActivity"
             android:label="@string/title_activity_we_chat_detail"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/ImageTranslucentTheme" />
     </application>
 
 </manifest>

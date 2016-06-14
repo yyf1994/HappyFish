@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -99,6 +101,27 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
                 onBackPressed();
             }
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mCustomWebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                    float webcontent = mCustomWebView.getContentHeight()*mCustomWebView.getScale();// webview的高度
+                    float webnow = mCustomWebView.getHeight() + mCustomWebView.getScrollY();// 当前webview的高度
+                    Log.i("TAG1", "webview.getScrollY()====>>" + mCustomWebView.getScrollY());
+                    if (Math.abs(webcontent - webnow) < 1) {
+                        // 已经处于底端
+                         Log.i("TAG1", "已经处于底端");
+    //                    listener.onPageEnd(l, t, oldl, oldt);
+                    } else if (mCustomWebView.getScrollY() == 0) {
+                         Log.i("TAG1", "已经处于顶端");
+    //                    listener.onPageTop(l, t, oldl, oldt);
+                    } else {
+    //                    listener.onScrollChanged(l, t, oldl, oldt);
+                    }
+                }
+            });
+        }
     }
 
 
@@ -155,8 +178,10 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
     }
 
     private void initView() {
-        toolbar.setNavigationIcon(R.mipmap.back);
-        toolbar.inflateMenu(R.menu.toolbar_menu);//设置右上角的填充菜单
+//        toolbar.setNavigationIcon(R.mipmap.back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().inflateMenu(R.menu.toolbar_menu);//设置右上角的填充菜单
         WebSettings webSettings = mCustomWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);//支持js
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -260,6 +285,12 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
+        return true;
+    }
+
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         int menuItemId = item.getItemId();
         if (menuItemId == R.id.action_item1) {
@@ -305,9 +336,6 @@ public class WeChatDetailActivity extends AppCompatActivity implements Toolbar.O
                                }
                            }
                        }).open();
-        } else if (menuItemId == R.id.action_item2) {
-            Toast.makeText(WeChatDetailActivity.this, R.string.item02, Toast.LENGTH_SHORT).show();
-
         }
         return true;
     }

@@ -6,9 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -16,6 +13,7 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.yyf.happyfish.R;
 import com.yyf.happyfish.entity.TabEntity;
 import com.yyf.happyfish.main.adapter.MainPagerAdapter;
+import com.yyf.happyfish.setting.view.SettingFragment;
 import com.yyf.happyfish.wechat.view.fragment.WeChatFragment;
 
 import java.util.ArrayList;
@@ -33,24 +31,25 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.toolbar_base)
     Toolbar toolbar;
-    @BindView(R.id.toolbar_title)
-    TextView title;
+//    @BindView(R.id.toolbar_title)
+//    TextView title;
 
     private WeChatFragment mWeChatFragment;
     private WeChatFragment mMessageFragment1;
     private WeChatFragment mMessageFragment2;
+    private SettingFragment mSettingFragment;
 
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private MainPagerAdapter mViewPagerAdapter;
     Random mRandom = new Random();
-    private String[] mTitles = {"微信", "新闻", "笑话"};
+    private String[] mTitles = {"微信", "新闻", "笑话","设置"};
     private int[] mIconUnselectIds = {
             R.mipmap.xiaoxi, R.mipmap.zhanshang,
-            R.mipmap.zhanpin};
+            R.mipmap.zhanpin,R.mipmap.zhanpin};
     private int[] mIconSelectIds = {
-            R.mipmap.xiaoxixuanzhong, R.mipmap.zhanshangxuanzhong,
-            R.mipmap.zhanpinxuanzhong};
+            R.mipmap.wechatselect, R.mipmap.wechatselect,
+            R.mipmap.wechatselect,R.mipmap.wechatselect};
     private Context mContext = this;
     private Unbinder unbinder;
 
@@ -73,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         //初始化toolbar
+        toolbar.setTitle("微信精选");
         setSupportActionBar(toolbar);
-        title.setText("微信精选");
+//        title.setText("微信精选");
 
         buttomlayout.setTabData(mTabEntities);
         buttomlayout.setOnTabSelectListener(new OnTabSelectListener() {
@@ -82,11 +82,13 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelect(int position) {
                 viewPager.setCurrentItem(position);
                 if (position == 0) {
-                    title.setText("微信精选");
+                    toolbar.setTitle("微信精选");
                 }else if(position ==1){
-                    title.setText("新闻");
+                    toolbar.setTitle("新闻");
+                }else if(position == 2){
+                    toolbar.setTitle("笑话");
                 }else{
-                    title.setText("笑话");
+                    toolbar.setTitle("设置");
                 }
             }
 
@@ -102,11 +104,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (position == 0) {
-                    title.setText("微信精选");
+                    toolbar.setTitle("微信精选");
                 }else if(position ==1){
-                    title.setText("新闻");
+                    toolbar.setTitle("新闻");
+                }else if(position == 2){
+                    toolbar.setTitle("笑话");
                 }else{
-                    title.setText("笑话");
+                    toolbar.setTitle("设置");
                 }
             }
 
@@ -123,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setCurrentItem(1);
 
+        setSupportActionBar(toolbar);
+
     }
 
 
@@ -134,37 +140,16 @@ public class MainActivity extends AppCompatActivity {
         mWeChatFragment = new WeChatFragment();
         mMessageFragment1 = new WeChatFragment();
         mMessageFragment2 = new WeChatFragment();
+        mSettingFragment = new SettingFragment();
         mFragments.add(mWeChatFragment);
         mFragments.add(mMessageFragment1);
         mFragments.add(mMessageFragment2);
-
+        mFragments.add(mSettingFragment);
     }
 
     private void setAdapter() {
         mViewPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(),mFragments,mTitles);
         viewPager.setAdapter(mViewPagerAdapter);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

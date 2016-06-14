@@ -5,10 +5,6 @@
     <item
         android:id="@+id/action_item1"
         android:title="@string/item01"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_item2"
-        android:title="@string/item02"
-        app:showAsAction="never" />
+        android:icon="@mipmap/share"
+        app:showAsAction="ifRoom" />
 </menu>

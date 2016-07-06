@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    tools:context=".main.view.MainActivity"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardBackgroundColor="@color/cardview_light_background"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="4dp"
+    card_view:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <ImageView
+            android:id="@+id/img_firstimg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="10dp"/>
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/img_firstimg"
+            android:textSize="18dp"/>
+
+        <TextView
+            android:id="@+id/source_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_below="@+id/title_tv"
+            android:layout_toRightOf="@+id/img_firstimg"
+            android:layout_toEndOf="@+id/img_firstimg"
+            android:gravity="right"
+            android:textSize="13dp"/>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

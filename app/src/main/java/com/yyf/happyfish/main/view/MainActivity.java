@@ -13,6 +13,7 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.yyf.happyfish.R;
 import com.yyf.happyfish.entity.TabEntity;
 import com.yyf.happyfish.main.adapter.MainPagerAdapter;
+import com.yyf.happyfish.news.view.fragment.NewsTabFragment;
 import com.yyf.happyfish.setting.view.SettingFragment;
 import com.yyf.happyfish.wechat.view.fragment.WeChatFragment;
 
@@ -31,11 +32,9 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.toolbar_base)
     Toolbar toolbar;
-//    @BindView(R.id.toolbar_title)
-//    TextView title;
 
     private WeChatFragment mWeChatFragment;
-    private WeChatFragment mMessageFragment1;
+    private NewsTabFragment mNewsTabFragment;
     private WeChatFragment mMessageFragment2;
     private SettingFragment mSettingFragment;
 
@@ -43,14 +42,13 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private MainPagerAdapter mViewPagerAdapter;
     Random mRandom = new Random();
-    private String[] mTitles = {"微信", "新闻", "笑话","设置"};
+    private String[] mTitles = {"微信", "新闻", "笑话", "设置"};
     private int[] mIconUnselectIds = {
             R.mipmap.xiaoxi, R.mipmap.zhanshang,
-            R.mipmap.zhanpin,R.mipmap.zhanpin};
+            R.mipmap.zhanpin, R.mipmap.zhanpin};
     private int[] mIconSelectIds = {
             R.mipmap.wechatselect, R.mipmap.wechatselect,
-            R.mipmap.wechatselect,R.mipmap.wechatselect};
-    private Context mContext = this;
+            R.mipmap.wechatselect, R.mipmap.wechatselect};
     private Unbinder unbinder;
 
 
@@ -74,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         //初始化toolbar
         toolbar.setTitle("微信精选");
         setSupportActionBar(toolbar);
-//        title.setText("微信精选");
 
         buttomlayout.setTabData(mTabEntities);
         buttomlayout.setOnTabSelectListener(new OnTabSelectListener() {
@@ -83,11 +80,11 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(position);
                 if (position == 0) {
                     toolbar.setTitle("微信精选");
-                }else if(position ==1){
+                } else if (position == 1) {
                     toolbar.setTitle("新闻");
-                }else if(position == 2){
+                } else if (position == 2) {
                     toolbar.setTitle("笑话");
-                }else{
+                } else {
                     toolbar.setTitle("设置");
                 }
             }
@@ -105,11 +102,11 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (position == 0) {
                     toolbar.setTitle("微信精选");
-                }else if(position ==1){
+                } else if (position == 1) {
                     toolbar.setTitle("新闻");
-                }else if(position == 2){
+                } else if (position == 2) {
                     toolbar.setTitle("笑话");
-                }else{
+                } else {
                     toolbar.setTitle("设置");
                 }
             }
@@ -138,17 +135,17 @@ public class MainActivity extends AppCompatActivity {
             mTabEntities.add(new TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]));
         }
         mWeChatFragment = new WeChatFragment();
-        mMessageFragment1 = new WeChatFragment();
+        mNewsTabFragment = new NewsTabFragment();
         mMessageFragment2 = new WeChatFragment();
         mSettingFragment = new SettingFragment();
         mFragments.add(mWeChatFragment);
-        mFragments.add(mMessageFragment1);
+        mFragments.add(mNewsTabFragment);
         mFragments.add(mMessageFragment2);
         mFragments.add(mSettingFragment);
     }
 
     private void setAdapter() {
-        mViewPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(),mFragments,mTitles);
+        mViewPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), mFragments, mTitles);
         viewPager.setAdapter(mViewPagerAdapter);
     }
 

@@ -69,18 +69,18 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     private Intent intent;
     private CheckNetUtil checkNetUtil = new CheckNetUtil();
     public static boolean isConnected;
-    private  NetWorkBroadcastReceiver myReceiver;
+    private NetWorkBroadcastReceiver myReceiver;
     private String key = "a75b2fd40ea0a3231f859c45b92a885b";
-    private int  pno = 1;
+    private int pno = 1;
     private int ps = 10;
-    private int total_pno= 1;
+    private int total_pno = 1;
     private int mCurrentCounter = 0;
     private static int TOTAL_COUNTER = 0;
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        unbinder = ButterKnife.bind(this,view);
+        unbinder = ButterKnife.bind(this, view);
         mAllData = new ArrayList<>();
         //设置recyclerview
         linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -103,14 +103,14 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         initAdapter();
         setListener();
         //初始化数据
-        if(checkNetUtil.isNetworkConnected(getActivity())){
+        if (checkNetUtil.isNetworkConnected(getActivity())) {
 
-            mPresent.getData(view,pno,ps,key);
+            mPresent.getData(view, pno, ps, key);
         }
       /*  if(isConnected){
             mPresent.getData(view);
         }*/
-        else{
+        else {
             //无网络时加载缓存
             List<ListEntity> list1 = diskCacheUtil.getAsSerializable("ListEntity");
             mData = list1;
@@ -128,7 +128,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("onResume","onResume");
+        Log.d("onResume", "onResume");
         Intent intent = new Intent(getActivity().getApplicationContext(), ReceiveMsgService.class);
         getActivity().getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -165,7 +165,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         recyclerView.setAdapter(mAdapter);
         mCurrentCounter = mAdapter.getData().size();
 
-        if(checkNetUtil.isNetworkConnected(getActivity())){
+        if (checkNetUtil.isNetworkConnected(getActivity())) {
             mAdapter.setOnLoadMoreListener(this);
             mAdapter.openLoadMore(ps, true);
         }
@@ -177,7 +177,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), WeChatDetailActivity.class);
-                ListEntity list =  mAllData.get(position);
+                ListEntity list = mAllData.get(position);
                 intent.putExtra("result", list);
                 startActivity(intent);
             }
@@ -196,15 +196,15 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     }
 
     @OnClick(R.id.fab)
-    public void fab(){
+    public void fab() {
         linearLayoutManager.scrollToPosition(0);
     }
 
     @Override
     public void onRefresh() {
-        if(checkNetUtil.isNetworkConnected(getActivity())) {
+        if (checkNetUtil.isNetworkConnected(getActivity())) {
             pno = 1;
-            mPresent.pulldowntorefresh(pno,ps,key);
+            mPresent.pulldowntorefresh(pno, ps, key);
         }
         /*if(isConnected) {
             mPresent.pulldowntorefresh();
@@ -213,14 +213,14 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
     @Override
     public void onLoadMoreRequested() {
-        Log.d("onLoadMoreRequested","onLoadMoreRequested");
-        if(pno < total_pno){
+        Log.d("onLoadMoreRequested", "onLoadMoreRequested");
+        if (pno < total_pno) {
             pno++;
-        }else{
+        } else {
             pno = total_pno;
         }
-        if(checkNetUtil.isNetworkConnected(getActivity())) {
-            mPresent.upload(pno,ps,key);
+        if (checkNetUtil.isNetworkConnected(getActivity())) {
+            mPresent.upload(pno, ps, key);
         }
        /* if(isConnected) {
             mPresent.upload();
@@ -230,6 +230,11 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     public void responseSuccess(Response<WeChatEntity> response, View view) {
 
+        loadData(response);
+
+    }
+
+    private void loadData(Response<WeChatEntity> response) {
         weChatEntity = response.body();
         String result = weChatEntity.getReason();
         if (result.equals("success")) {
@@ -237,14 +242,14 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             list = resultEntity.getList();
             diskCacheUtil.put("ListEntity", (Serializable) list);
             TOTAL_COUNTER = resultEntity.getTotalPage();
-            total_pno =(TOTAL_COUNTER+(ps-1))/ps;
+            total_pno = (TOTAL_COUNTER + (ps - 1)) / ps;
             mData = list;
             mAllData.clear();
             mAllData.addAll(mData);
         }
 
         mAdapter.setNewData(mData);
-        if(mData.size()==0){
+        if (mData.size() == 0) {
             View emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) recyclerView.getParent(), false);
             mAdapter.setEmptyView(emptyView);
         }
@@ -252,6 +257,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }
+
     }
 
     @Override
@@ -260,32 +266,12 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
             swipeRefreshLayout.setRefreshing(false);
         }
         t.printStackTrace();
-        Toast.makeText(getActivity(),"网络连接超时",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "网络连接超时", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void RefreshSuccess(Response<WeChatEntity> response) {
-        weChatEntity = response.body();
-        String result = weChatEntity.getReason();
-
-        if (result.equals("success")) {
-            resultEntity = weChatEntity.getResult();
-            list = resultEntity.getList();
-            TOTAL_COUNTER = resultEntity.getTotalPage();
-            total_pno =(TOTAL_COUNTER+(ps-1))/ps;
-            mData = list;
-            mAllData.clear();
-            mAllData.addAll(mData);
-        }
-        mAdapter.setNewData(mData);
-        if(mData.size()==0){
-            View emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) recyclerView.getParent(), false);
-            mAdapter.setEmptyView(emptyView);
-        }
-        mCurrentCounter = ps;
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+        loadData(response);
     }
 
     @Override
@@ -317,7 +303,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(checkNetUtil.isNetworkConnected(getActivity())) {
+        if (checkNetUtil.isNetworkConnected(getActivity())) {
             swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
@@ -340,7 +326,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
     public void onPause() {
         super.onPause();
         //取消请求
-        if(checkNetUtil.isNetworkConnected(getActivity())) {
+        if (checkNetUtil.isNetworkConnected(getActivity())) {
             mPresent.cancelRequest();
         }
       /*  if(isConnected) {
@@ -366,9 +352,9 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
         public void onServiceConnected(ComponentName name, IBinder service) {
             ReceiveMsgService receiveMsgService = ((ReceiveMsgService.MyBinder) service)
                     .getService();
-            if(isConnected){
+            if (isConnected) {
                 handler.sendEmptyMessage(1);
-            }else{
+            } else {
                 handler.sendEmptyMessage(2);
             }
         }
@@ -379,7 +365,7 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 
             switch (msg.what) {
                 case 1:// 已连接
-                    Log.d("handler","网络已经连接");
+                    Log.d("handler", "网络已经连接");
                     //网络连接之后可以刷新数据
 //                    if (swipeRefreshLayout != null) {
 //                        swipeRefreshLayout.setEnabled(true);
@@ -390,13 +376,15 @@ public class WeChatFragment extends BaseFragment implements WeChatContract.View,
 //                    mPresent.pulldowntorefresh();
                     break;
                 case 2:// 未连接
-                    Log.d("handler","网络未连接");
+                    Log.d("handler", "网络未连接");
                     break;
                 default:
                     break;
             }
             ;
-        };
+        }
+
+        ;
     };
 
     @Override

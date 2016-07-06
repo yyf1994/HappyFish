@@ -1,5 +1,6 @@
 package com.yyf.happyfish.service;
 
+import com.yyf.happyfish.news.model.NewsEntity;
 import com.yyf.happyfish.wechat.model.WeChatEntity;
 
 import retrofit2.Call;
@@ -17,8 +18,11 @@ public interface HappyFishService {
     @GET("/weixin/query")
     Call<WeChatEntity> loadWeChat(@Query("pno")int pno,@Query("ps")int ps,@Query("key")String key );
 
-    @GET("/weixin/query?key=a75b2fd40ea0a3231f859c45b92a885b ")
-    Call<WeChatEntity> loadNews();
+    /**
+     * http://v.juhe.cn/toutiao/index?type=top&key=254079df18196a395ab86883e659b8dc
+     * **/
+    @GET("/toutiao/index")
+    Call<NewsEntity> loadNews(@Query("type") String type, @Query("key") String key);
 
     /**
      * http://api.douban.com/labs/bubbler/user/ahbei

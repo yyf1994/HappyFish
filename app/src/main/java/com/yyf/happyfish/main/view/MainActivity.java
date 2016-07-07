@@ -1,6 +1,5 @@
 package com.yyf.happyfish.main.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -66,7 +65,11 @@ public class MainActivity extends AppCompatActivity {
         initView();
         setAdapter();
 
+        /*当背景颜色为白色时，修改小米系统的状态栏的字体颜色为深色*/
+        //StatusBarUtil.MIUISetStatusBarLightMode(getWindow(),true);
+
     }
+
 
     private void initView() {
         //初始化toolbar
